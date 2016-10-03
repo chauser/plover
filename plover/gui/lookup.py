@@ -27,7 +27,7 @@ class LookupDialog(wx.Dialog):
 
         # components
         self.translation_text = wx.TextCtrl(self, style=wx.TE_PROCESS_ENTER)
-        self.listbox = wx.ListBox(self, size=wx.Size(210, 200),
+        self.listbox = wx.ListBox(self, size=wx.Size(310, 300),
                                   style=wx.LB_HSCROLL)
         cancel = wx.Button(self, wx.ID_CANCEL, CANCEL_BUTTON)
         cancel.Bind(wx.EVT_BUTTON, self.on_close)
@@ -95,8 +95,10 @@ class LookupDialog(wx.Dialog):
                 for suggestion, strokes in suggestions:
                     self.listbox.Append(escape_translation(suggestion))
                     entries = ('/'.join(x) for x in strokes)
+                    entriesString = ''
                     for entry in entries:
-                        self.listbox.Append('    %s' % (entry))
+                        entriesString += ('  %s' % (entry))
+                    self.listbox.Append(entriesString)
                 self.listbox.EnsureVisible(0)
             else:
                 self.listbox.Append('No entries')

@@ -2,6 +2,16 @@ import collections
 
 Suggestion = collections.namedtuple('Suggestion', 'text steno_list')
 
+ranks = {}
+def readRanks():
+    words = open("Ranked5000wordsOnly.csv", "r").readlines()
+    for i in range(len(words)):
+        ranks[words[i][:-1]] = i
+
+readRanks()
+
+def getRank(x):
+    return ranks.get(x, 10000+len(x))
 
 class Suggestions(object):
     def __init__(self, dictionary):
@@ -50,4 +60,20 @@ class Suggestions(object):
                 suggestion = Suggestion(modded_translation, strokes_list)
                 suggestions.append(suggestion)
 
+        extensions = sorted([(getRank(w),w)
+                             for w in self.dictionary.extensions(translation.lower())])
+        for (rank,t) in extensions[0:8]:
+            if t==translation: continue
+            for tr in self.dictionary.casereverse_lookup(t.lower()):
+                strokes_list = self.dictionary.reverse_lookup(tr)
+                if not strokes_list:
+                    continue
+                # Return suggestions, sorted by fewest strokes, then fewest keys
+                strokes_list = sorted(
+                    strokes_list,
+                    key=lambda x: (len(x), sum(map(len, x)))
+                )
+                suggestion = Suggestion(tr+"(%d)"%rank, strokes_list)
+                suggestions.append(suggestion)
+        
         return suggestions

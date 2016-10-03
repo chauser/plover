@@ -8,6 +8,7 @@ A steno dictionary maps sequences of steno strokes to translations.
 """
 
 import collections
+import marisa_trie
 
 class StenoDictionary(collections.MutableMapping):
     """A steno dictionary.
@@ -102,9 +103,13 @@ class StenoDictionaryCollection(object):
             d.remove_longest_key_listener(self._longest_key_listener)
         self.dicts = dicts[:]
         self.dicts.reverse()
+        values = []
         for d in dicts:
             d.add_longest_key_listener(self._longest_key_listener)
+            values += d.casereverse.keys()
+        self.trie = marisa_trie.Trie(values)
         self._longest_key_listener()
+        
 
     def _lookup(self, key, dicts=None, filters=()):
         if dicts is None:
@@ -143,6 +148,9 @@ class StenoDictionaryCollection(object):
             if key:
                 return key
 
+    def extensions(self, value):
+        return self.trie.keys(value)
+            
     def set(self, key, value, dictionary=None):
         if dictionary is None:
             d = self.dicts[0]

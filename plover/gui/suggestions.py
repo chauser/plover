@@ -153,19 +153,19 @@ class SuggestionsDisplayDialog(wx.Dialog):
                 continue
             self.listbox.SetDefaultStyle(self.stroke_style)
             # Limit arbitrarily to 10 suggestions per word.
+            line_text = ""
             for stroke_list in suggestion.steno_list[:10]:
-                line_text = None
                 for n, stroke in enumerate(stroke_list):
                     if 0 == n:
-                        line_text = text = self.strokes_indent + stroke
+                        text = self.strokes_indent + stroke
                     else:
                         text = u'/' + stroke
-                        line_text += text
-                        if dc.GetTextExtent(line_text)[0] >= max_width:
-                            line_text = 2 * self.strokes_indent + text
-                            text = u'\n' + line_text
+                    line_text += text
+                    if dc.GetTextExtent(line_text)[0] >= max_width:
+                        line_text = 2 * self.strokes_indent + text
+                        text = u'\n' + line_text
                     self.listbox.WriteText(shorten_unicode(text))
-                self.listbox.WriteText(u'\n')
+            self.listbox.WriteText(u'\n')
 
         length = self.listbox.GetInsertionPoint()
         assert length
