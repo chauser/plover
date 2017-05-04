@@ -1,10 +1,12 @@
 import collections
+from plover.oslayer.config import CONFIG_DIR
+from os.path import join
 
 Suggestion = collections.namedtuple('Suggestion', 'text steno_list')
 
 ranks = {}
 def readRanks():
-    words = open("google-10000-english.txt", "r").readlines()
+    words = open(join(CONFIG_DIR, "google-10000-english.txt"), "r").readlines()
     for i in range(len(words)):
         ranks[words[i][:-1]] = i
 
